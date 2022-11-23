@@ -2,6 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QNetworkAccessManager>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -22,6 +23,7 @@ class MainWindow : public QMainWindow
     void on_fetchButton_clicked();
 
   private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui{nullptr};
+    QNetworkAccessManager *networkManager{nullptr};
 };
 #endif // MAINWINDOW_HPP
