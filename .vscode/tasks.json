@@ -1,0 +1,51 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "run",
+            "command": "./app",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            }
+        },
+        {
+            "label": "rebuild",
+            "dependsOrder": "sequence",
+            "dependsOn": ["clean", "mkdir build", "qmake", "make"]
+        },
+        {
+            "type": "shell",
+            "label": "make",
+            "command": "make -j8 TARGET=app",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "qmake",
+            "command": "qmake .. CONFIG+=debug",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "mkdir build",
+            "command": "mkdir -p build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "clean",
+            "command": "rm -rf build",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ]
+}
