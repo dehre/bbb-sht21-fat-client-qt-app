@@ -13,3 +13,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_fetchButton_clicked()
+{
+    ui->statusbar->showMessage("Nothing yet :(");
+}
