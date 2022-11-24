@@ -68,13 +68,13 @@ std::variant<MainWindow::JsonData, MainWindow::JsonError> MainWindow::parseJson(
     const QJsonDocument jsonDoc{QJsonDocument::fromJson(byteArray)};
     if (!jsonDoc.isObject())
     {
-        return QString{"Received Unexpected JSON Data"};
+        return JsonError{"Received Unexpected JSON Data"};
     }
 
     QJsonObject jsonObj{jsonDoc.object()};
     if (jsonObj.contains("error"))
     {
-        return QString{"Sensor Error: "}.append(jsonObj["error"].toString());
+        return JsonError{"Sensor Error: "}.append(jsonObj["error"].toString());
     }
 
     const QJsonObject jsonData{jsonObj["data"].toObject()};
