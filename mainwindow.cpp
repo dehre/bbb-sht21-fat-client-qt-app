@@ -7,7 +7,7 @@
 #include <regex>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow{parent}, ui{new Ui::MainWindow}, networkManager{new QNetworkAccessManager()}
+    : QMainWindow{parent}, ui{new Ui::MainWindow{}}, networkManager{new QNetworkAccessManager{}}
 {
     ui->setupUi(this);
 
@@ -49,7 +49,7 @@ void MainWindow::on_button_fetch_clicked()
         ui->statusbar->clearMessage();
         ui->lcd_temperature->display(data.temperature);
         ui->lcd_humidity->display(data.humidity);
-        ui->label_lastupdate->setText(QString("Last Update: ").append(QDateTime::currentDateTime().toString()));
+        ui->label_lastupdate->setText(QString{"Last Update: "}.append(QDateTime::currentDateTime().toString()));
 
         networkManager->disconnect();
     });
@@ -60,7 +60,7 @@ bool MainWindow::isValidUrl(const QString &url)
     /* Qt's URL validation is quite weak even in strict mode, e.g. `somegarbage` is valid;
      * see: https://doc.qt.io/qt-6/qurl.html#isValid */
     return std::regex_match(url.toStdString(),
-                            std::regex("(http|https)://([^/ :]+):?([^/ ]*)(/?[^ #?]*)\\x3f?([^ #]*)#?([^ ]*)"));
+                            std::regex{"(http|https)://([^/ :]+):?([^/ ]*)(/?[^ #?]*)\\x3f?([^ #]*)#?([^ ]*)"});
 }
 
 std::variant<MainWindow::JsonData, MainWindow::JsonError> MainWindow::parseJson(const QByteArray &byteArray)
