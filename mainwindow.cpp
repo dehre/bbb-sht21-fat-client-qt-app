@@ -5,7 +5,7 @@
 #include <QNetworkReply>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), networkManager(new QNetworkAccessManager())
+    : QMainWindow{parent}, ui{new Ui::MainWindow}, networkManager{new QNetworkAccessManager()}
 {
     ui->setupUi(this);
 }

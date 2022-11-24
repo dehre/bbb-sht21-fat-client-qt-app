@@ -24,7 +24,7 @@ class MainWindow : public QMainWindow
 
   private:
     Ui::MainWindow *ui{nullptr};
-    QNetworkAccessManager *networkManager{nullptr}; // TODO LORIS: unique_ptr?
+    QNetworkAccessManager *networkManager{nullptr};
 
     struct JsonData
     {
