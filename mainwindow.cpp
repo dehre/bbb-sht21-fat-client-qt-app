@@ -1,5 +1,6 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
+#include <QDateTime>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QNetworkReply>
@@ -26,17 +27,19 @@ void MainWindow::on_button_fetch_clicked()
             ui->statusbar->showMessage(QString{"Network Error: "}.append(networkReply->errorString()));
             return;
         }
+
         const std::variant<JsonData, JsonError> reply{parseJson(networkReply->readAll())};
         if (std::holds_alternative<JsonError>(reply))
         {
             ui->statusbar->showMessage(std::get<JsonError>(reply));
             return;
         }
+
         JsonData data{std::get<JsonData>(reply)};
-        ui->statusbar->showMessage(QString{"Temperature: "}
-                                       .append(QString::number(data.temperature))
-                                       .append(" Humidity: ")
-                                       .append(QString::number(data.humidity)));
+        ui->statusbar->showMessage("");
+        ui->lcd_temperature->display(data.temperature);
+        ui->lcd_humidity->display(data.humidity);
+        ui->label_lastupdate->setText(QString("Last update: ").append(QDateTime::currentDateTime().toString()));
         networkManager->disconnect();
     });
 }
