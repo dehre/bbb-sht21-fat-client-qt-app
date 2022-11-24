@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QNetworkAccessManager>
@@ -36,4 +36,4 @@ class MainWindow : public QMainWindow
     bool isValidUrl(const QString &);
     std::variant<JsonData, JsonError> parseJson(const QByteArray &);
 };
-#endif // MAINWINDOW_HPP
+#endif // MAINWINDOW_H
