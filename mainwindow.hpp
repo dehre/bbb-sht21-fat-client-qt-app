@@ -25,5 +25,13 @@ class MainWindow : public QMainWindow
   private:
     Ui::MainWindow *ui{nullptr};
     QNetworkAccessManager *networkManager{nullptr}; // TODO LORIS: unique_ptr?
+
+    struct JsonData
+    {
+        double temperature;
+        double humidity;
+    };
+    using JsonError = QString;
+    std::variant<JsonData, JsonError> parseJson(const QByteArray &);
 };
 #endif // MAINWINDOW_HPP

@@ -19,33 +19,41 @@ MainWindow::~MainWindow()
 void MainWindow::on_fetchButton_clicked()
 {
     networkManager->get(QNetworkRequest(QUrl("http://localhost:8080/")));
-    QObject::connect(networkManager, &QNetworkAccessManager::finished, this, [this](QNetworkReply *reply) {
-        if (reply->error())
+    QObject::connect(networkManager, &QNetworkAccessManager::finished, this, [this](QNetworkReply *networkReply) {
+        if (networkReply->error())
         {
-            ui->statusbar->showMessage(QString{"Network Error: "}.append(reply->errorString()));
+            ui->statusbar->showMessage(QString{"Network Error: "}.append(networkReply->errorString()));
             return;
         }
-        // TODO LORIS: separate method to parse JSON
-        const QJsonDocument jsonDoc{QJsonDocument::fromJson(reply->readAll())};
-        if (!jsonDoc.isObject())
+        const std::variant<JsonData, JsonError> reply{parseJson(networkReply->readAll())};
+        if (std::holds_alternative<JsonError>(reply))
         {
-            ui->statusbar->showMessage("Received invalid JSON data");
+            ui->statusbar->showMessage(std::get<JsonError>(reply));
             return;
         }
-        QJsonObject jsonObj{jsonDoc.object()};
-        if (jsonObj.contains("error"))
-        {
-            ui->statusbar->showMessage(QString{"Sensor Error: "}.append(jsonObj["error"].toString()));
-            return;
-        }
-        const QJsonObject jsonData{jsonObj["data"].toObject()};
-        const double temperature{jsonData["temperature"].toDouble()};
-        const double humidity{jsonData["humidity"].toDouble()};
+        JsonData data{std::get<JsonData>(reply)};
         ui->statusbar->showMessage(QString{"Temperature: "}
-                                       .append(QString::number(temperature))
+                                       .append(QString::number(data.temperature))
                                        .append(" Humidity: ")
-                                       .append(QString::number(humidity)));
-        // TODO LORIS: end of JSON method
+                                       .append(QString::number(data.humidity)));
         networkManager->disconnect();
     });
-}
+};
+
+std::variant<MainWindow::JsonData, MainWindow::JsonError> MainWindow::parseJson(const QByteArray &byteArray)
+{
+    const QJsonDocument jsonDoc{QJsonDocument::fromJson(byteArray)};
+    if (!jsonDoc.isObject())
+    {
+        return QString{"Received unexpected JSON data"};
+    }
+    QJsonObject jsonObj{jsonDoc.object()};
+    if (jsonObj.contains("error"))
+    {
+        return QString{"Sensor Error: "}.append(jsonObj["error"].toString());
+    }
+    const QJsonObject jsonData{jsonObj["data"].toObject()};
+    const double temperature{jsonData["temperature"].toDouble()};
+    const double humidity{jsonData["humidity"].toDouble()};
+    return JsonData{.temperature = temperature, .humidity = humidity};
+};
