@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}, ui{new Ui::MainWindow}, networkManager{new QNetworkAccessManager()}
 {
     ui->setupUi(this);
+    ui->statusbar->setStyleSheet("background-color: white; color: black; border-top: 1px solid grey");
 }
 
 MainWindow::~MainWindow()
@@ -16,7 +17,7 @@ MainWindow::~MainWindow()
     delete networkManager;
 }
 
-void MainWindow::on_fetchButton_clicked()
+void MainWindow::on_button_fetch_clicked()
 {
     networkManager->get(QNetworkRequest(QUrl("http://localhost:8080/")));
     QObject::connect(networkManager, &QNetworkAccessManager::finished, this, [this](QNetworkReply *networkReply) {
@@ -38,7 +39,7 @@ void MainWindow::on_fetchButton_clicked()
                                        .append(QString::number(data.humidity)));
         networkManager->disconnect();
     });
-};
+}
 
 std::variant<MainWindow::JsonData, MainWindow::JsonError> MainWindow::parseJson(const QByteArray &byteArray)
 {

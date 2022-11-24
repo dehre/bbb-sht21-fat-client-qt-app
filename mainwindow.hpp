@@ -20,7 +20,7 @@ class MainWindow : public QMainWindow
     ~MainWindow();
 
   private slots:
-    void on_fetchButton_clicked();
+    void on_button_fetch_clicked();
 
   private:
     Ui::MainWindow *ui{nullptr};
