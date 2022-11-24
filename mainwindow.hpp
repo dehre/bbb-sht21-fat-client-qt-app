@@ -32,6 +32,8 @@ class MainWindow : public QMainWindow
         double humidity;
     };
     using JsonError = QString;
+
+    bool isValidUrl(const QString &);
     std::variant<JsonData, JsonError> parseJson(const QByteArray &);
 };
 #endif // MAINWINDOW_HPP
