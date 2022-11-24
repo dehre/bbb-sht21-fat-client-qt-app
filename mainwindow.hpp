@@ -24,6 +24,6 @@ class MainWindow : public QMainWindow
 
   private:
     Ui::MainWindow *ui{nullptr};
-    QNetworkAccessManager *networkManager{nullptr};
+    QNetworkAccessManager *networkManager{nullptr}; // TODO LORIS: unique_ptr?
 };
 #endif // MAINWINDOW_HPP

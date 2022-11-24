@@ -1,5 +1,7 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QNetworkReply>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -23,7 +25,27 @@ void MainWindow::on_fetchButton_clicked()
             ui->statusbar->showMessage(QString{"Network Error: "}.append(reply->errorString()));
             return;
         }
-        ui->statusbar->showMessage(reply->readAll());
+        // TODO LORIS: separate method to parse JSON
+        const QJsonDocument jsonDoc{QJsonDocument::fromJson(reply->readAll())};
+        if (!jsonDoc.isObject())
+        {
+            ui->statusbar->showMessage("Received invalid JSON data");
+            return;
+        }
+        QJsonObject jsonObj{jsonDoc.object()};
+        if (jsonObj.contains("error"))
+        {
+            ui->statusbar->showMessage(QString{"Sensor Error: "}.append(jsonObj["error"].toString()));
+            return;
+        }
+        const QJsonObject jsonData{jsonObj["data"].toObject()};
+        const double temperature{jsonData["temperature"].toDouble()};
+        const double humidity{jsonData["humidity"].toDouble()};
+        ui->statusbar->showMessage(QString{"Temperature: "}
+                                       .append(QString::number(temperature))
+                                       .append(" Humidity: ")
+                                       .append(QString::number(humidity)));
+        // TODO LORIS: end of JSON method
         networkManager->disconnect();
     });
 }
