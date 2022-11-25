@@ -46,7 +46,7 @@ void MainWindow::on_button_fetch_clicked()
             return;
         }
 
-        JsonData data{std::get<JsonData>(reply)};
+        const JsonData data{std::get<JsonData>(reply)};
         ui->statusbar->clearMessage();
         ui->lcd_temperature->display(data.temperature);
         ui->lcd_humidity->display(data.humidity);
@@ -66,20 +66,20 @@ bool MainWindow::isValidUrl(const QString &url)
 
 std::variant<MainWindow::JsonData, MainWindow::JsonError> MainWindow::parseJson(const QByteArray &byteArray)
 {
-    const QJsonDocument jsonDoc{QJsonDocument::fromJson(byteArray)};
-    if (!jsonDoc.isObject())
+    const QJsonDocument doc{QJsonDocument::fromJson(byteArray)};
+    if (!doc.isObject())
     {
         return JsonError{"Received Unexpected JSON Data"};
     }
 
-    QJsonObject jsonObj{jsonDoc.object()};
-    if (jsonObj.contains("error"))
+    const QJsonObject obj{doc.object()};
+    if (obj.contains("error"))
     {
-        return JsonError{"Sensor Error: "}.append(jsonObj["error"].toString());
+        return JsonError{"Sensor Error: "}.append(obj["error"].toString());
     }
 
-    const QJsonObject jsonData{jsonObj["data"].toObject()};
-    const double temperature{jsonData["temperature"].toDouble()};
-    const double humidity{jsonData["humidity"].toDouble()};
+    const QJsonObject data{obj["data"].toObject()};
+    const double temperature{data["temperature"].toDouble()};
+    const double humidity{data["humidity"].toDouble()};
     return JsonData{.temperature = temperature, .humidity = humidity};
 };
