@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}, ui{new Ui::MainWindow{}}, networkManager{new QNetworkAccessManager{}}
 {
     ui->setupUi(this);
+    QObject::connect(ui->button_fetch, SIGNAL(clicked()), this, SLOT(on_button_fetch_clicked()));
 
     /* Qt Designer doesn't allow styling the status bar */
     ui->statusbar->setStyleSheet("background-color: white; color: red; font-style: italic; border-top: 1px solid grey");
